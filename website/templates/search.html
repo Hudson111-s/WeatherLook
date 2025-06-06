@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+<div class="container">
+  <div class="wrapper">
+    <form action="{{ url_for('main.Search') }}" method="post" autocomplete="off">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row top-title-input">
+        <label for="locationInput" class="col-form-label text-center">
+          <h1>
+            Location
+            <a data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-title="What to input?"
+              data-bs-content="Input a location that you want to get a forecast for! This could be a city, state or address!">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+              </svg>
+            </a>
+          </h1>
+        </label>
+
+        <input type="text" id="locationInput" name="Location" placeholder="Charlotte, NC" required>
+      </div>
+
+      <div class="row checkbox-style">
+        {% set half_length = current_params | length / 2 %}
+
+        <div class="col-md-3 currentCheckboxesCol">
+          {% for current in current_params[:half_length|int] %}
+            <div class="form-check">
+              <label class="form-check-label">{{current_readable_names[current]}}
+                <input class="form-check-input" type="checkbox" name="Checkbox[]" value="{{ current }}">
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="col-md-3 currentCheckboxesCol">
+          {% for current in current_params[half_length|int:] %}
+            <div class="form-check">
+              <label class="form-check-label">{{current_readable_names[current]}}
+                <input class="form-check-input" type="checkbox" name="Checkbox[]" value="{{ current }}">
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% set half_length = daily_params | length / 2 %}
+
+        <div class="col-md-3 forecastCheckboxesCol">
+          {% for current in daily_params[:half_length|int] %}
+            <div class="form-check">
+              <label class="form-check-label">{{daily_readable_names[current]}}
+                <input class="form-check-input" type="checkbox" name="Checkbox[]" value="{{ current }}">
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="col-md-3 forecastCheckboxesCol">
+          {% for current in daily_params[half_length|int:] %}
+            <div class="form-check">
+              <label class="form-check-label">{{daily_readable_names[current]}}
+                <input class="form-check-input" type="checkbox" name="Checkbox[]" value="{{ current }}">
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary w-50">Get weather!</button>
+        </div>
+      </div>
+
+      <div class="row dropdown-input">
+
+        <div class="col-md-3">
+          <label for="forecastSelect">Forecast length</label>
+          <select class="form-select" name="Forecast" id="forecastSelect">
+            <option value="&current=" selected>Current</option>
+            <option value="&forecast_days=1">Today</option>
+            <option value="">7 days</option>
+            <option value="&forecast_days=16">16 days</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="precipitationUnits">Precipitation Units</label>
+          <select class="form-select" name="Units[]" id="precipitationUnits">
+            <option value="" selected>Millimeter</option>
+            <option value="&precipitation_unit=inch">Inch</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="temperatureUnits">Temperature Units</label>
+          <select class="form-select" name="Units[]" id="temperatureUnits">
+            <option value="" selected>Celsius</option>
+            <option value="&temperature_unit=fahrenheit">Fahrenheit</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="windSpeedUnits">Wind speed Units</label>
+          <select class="form-select" name="Units[]" id="windSpeedUnits">
+            <option value="" selected>Km/h</option>
+            <option value="&wind_speed_unit=ms">M/s</option>
+            <option value="&wind_speed_unit=mph">Mp/h</option>
+            <option value="&wind_speed_unit=kn">Knots</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="{{ url_for('static', filename='forecastSelect.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let popoverTrigger = document.querySelector('[data-bs-toggle="popover"]');
+      if (popoverTrigger) {
+        return new bootstrap.Popover(popoverTrigger);
+      }
+    });
+  </script>
+{% endblock %}
