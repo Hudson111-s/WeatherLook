@@ -104,11 +104,11 @@
 
 {% block script %}
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const popoverTrigger = document.querySelector('[data-bs-toggle="popover"]');
+    document.addEventListener("DOMContentLoaded", () => {
+      const popoverTrigger = document.querySelector("[data-bs-toggle='popover']");
       if (popoverTrigger) {
         return new bootstrap.Popover(popoverTrigger);
       }
     });
   </script>
-{% endblock %}
+{% endblock %} 

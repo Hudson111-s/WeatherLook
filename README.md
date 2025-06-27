@@ -57,7 +57,6 @@ For now, it is only available for **local use**. Please follow the instructions 
     Replace <your_secret_key> with a strong, randomly generated key.
 
 
-
 5. **Run the app**
 
     Run the application using Flask:
@@ -69,7 +68,6 @@ For now, it is only available for **local use**. Please follow the instructions 
 6. **Open your browser** 
 
     Visit `http://127.0.0.1:5000` to access the app.
-
 
 
 ## Weather and Geolocation Data Attribution

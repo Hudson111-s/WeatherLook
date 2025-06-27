@@ -124,8 +124,8 @@
 {% block script %}
   <script src="{{ url_for('static', filename='forecastSelect.js') }}"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      let popoverTrigger = document.querySelector('[data-bs-toggle="popover"]');
+    document.addEventListener("DOMContentLoaded", () => {
+      let popoverTrigger = document.querySelector("[data-bs-toggle='popover']");
       if (popoverTrigger) {
         return new bootstrap.Popover(popoverTrigger);
       }

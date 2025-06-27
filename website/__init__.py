@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from website.utils import create_geolocator, create_logger, create_valid_pattern
 from website.routes import main as main_blueprint
@@ -5,25 +6,22 @@ from flask import Flask, request
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import os
-
-#------------------------------------------------------------------------------------------------------------------------------------
 
 load_dotenv()
 
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
     key = os.getenv("FLASK_KEY")
     if not key:
         raise ValueError("FLASK_KEY not set in .env")
-    app.config['SECRET_KEY'] = key
-    # app.config['ENV'] = 'production'
-    app.config['DEBUG'] = False
-    app.config['SESSION_PERMANENT'] = False
+    app.config["SECRET_KEY"] = key
+    # app.config["ENV"] = "production"
+    app.config["DEBUG"] = False
+    app.config["SESSION_PERMANENT"] = False
     app.register_blueprint(main_blueprint)
     
     # For HTTPS, JavaScript access, and CSRF.
-    app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE='Lax')
+    app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
 
     app.logger = create_logger()
     app.logger.info("App started.")

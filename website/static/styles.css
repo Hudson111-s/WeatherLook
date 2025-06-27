@@ -6,12 +6,12 @@
 }
 
 #description::after {
-    content: '|';
+    content: "|";
     animation: blink 1s infinite;
 }
 
 #description.done::after {
-    content: '';
+    content: "";
     animation: none;
 }
 
@@ -23,7 +23,7 @@
 * {
   margin:      0;
   padding:     0;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 body {

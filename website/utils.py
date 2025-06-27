@@ -1,45 +1,39 @@
+import os
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
+from typing import Any, Optional, Generator, Tuple, List, Dict
 from logging import getLogger, INFO, Formatter, Logger
 from logging.handlers import RotatingFileHandler
 from re import compile, Pattern
 from io import StringIO 
 from csv import writer
-import os
 from datetime import datetime
 from website.params import *
 
 # In-memory cache.
 location_cache = {}
 
-#------------------------------------------------------------------------------------------------------------------------------------
-
 def create_geolocator() -> RateLimiter:
     """
     Uses geopy to create Nominatim user_agent.
     
-    Returns:
-        RateLimiter.    
+    :return: RateLimiter.    
     """
-     
     geolocator = Nominatim(user_agent="WeatherLook", timeout=10)
     rate_limiter = RateLimiter(geolocator.geocode, min_delay_seconds=1)
     return rate_limiter
 
-#------------------------------------------------------------------------------------------------------------------------------------
 
-def get_location_coordinates(location: str, rate_limiter: RateLimiter, logger: Logger):
+def get_location_coordinates(location: str, rate_limiter: RateLimiter, logger: Logger) -> Tuple[Optional[Any], Optional[str]]:
     """
     Turns location into latitude and longitude.
 
-    :param (str) location: String of location.
+    :param location: String of location.
     :param rate_limiter: Geopy rate_limiter object.
     :param logger: Logger for error logging.  
     
-    Returns:
-        Tuple including Location in latitude, longitude and msg if err.
+    :return: Tuple including Location in latitude, longitude and msg if err.
     """
-
     try:
         cached_location = location_cache.get(location.strip().lower())
         if cached_location:
@@ -52,15 +46,13 @@ def get_location_coordinates(location: str, rate_limiter: RateLimiter, logger: L
         
         location_cache[location.strip().lower()] = location_ll
         return location_ll, None
-    
     except Exception as e:
         logger.exception(f"Something when wrong while getting location coordinates: {e}")
         return None, "Something went wrong, try again later!"
 
-#------------------------------------------------------------------------------------------------------------------------------------
 
 def create_logger() -> Logger:
-    """Creates basic logger"""
+    """Creates basic logger."""
     logger = getLogger(__name__)
     logger.setLevel(INFO)
 
@@ -68,7 +60,7 @@ def create_logger() -> Logger:
     os.makedirs("logs", exist_ok=True)
 
     file_handler = RotatingFileHandler(log_path, maxBytes=1000000, backupCount=3)
-    file_handler.setFormatter(Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+    file_handler.setFormatter(Formatter("%(asctime)s [%(levelname)s] %(message)s"))
     logger.addHandler(file_handler)
 
     try:
@@ -78,43 +70,41 @@ def create_logger() -> Logger:
 
     return logger
 
-#------------------------------------------------------------------------------------------------------------------------------------
 
 def create_valid_pattern() -> Pattern:
     return compile("^[\\w\\s,.'-]+$")
 
-#------------------------------------------------------------------------------------------------------------------------------------
 
-def stream_csv_from_json (forecast_is_current: bool, weather_params: list[str], weather_json: dict):
+def stream_csv_from_json(forecast_is_current: bool, weather_params: List[str], weather_json: Dict[str, Any]) -> Generator[str, None, None]:
     """
-    Streams csv file using json based on forecast length
+    Streams csv file using json based on forecast length.
 
-    :param (bool) forecast_is_current: States if the forecast is 'current' or 'daily'.
-    :param (list) weather_params: List of weather params for API.
-    :param (dict) weather_json: Weather api response in json.
+    :param forecast_is_current: States if the forecast is 'current' or 'daily'.
+    :param weather_params: List of weather params for API.
+    :param weather_json: Weather api response in json.
+
+    :return: A Generator
     """
     buffer = StringIO()
     wtr = writer(buffer)
 
     # Add for Excel compatibility.
-    yield '\ufeff'
+    yield "\ufeff"
 
     if forecast_is_current:
-
         wtr.writerow(["Weather", "Value"])
         yield buffer.getvalue()
         buffer.seek(0)
         buffer.truncate(0)
 
         for param in weather_params:
-            value = f"{weather_json['current'][param]} {weather_json['current_units'][param]}"
+            value = f"{weather_json["current"][param]} {weather_json["current_units"][param]}"
             wtr.writerow([CURRENT_PARAMS_READABLE[param], value])
             yield buffer.getvalue()
             buffer.seek(0)
             buffer.truncate(0)
         
     else:
-
         wtr.writerow(["Weather", "Value", "Date"])
         yield buffer.getvalue()
         buffer.seek(0)
@@ -132,31 +122,27 @@ def stream_csv_from_json (forecast_is_current: bool, weather_params: list[str], 
                 buffer.seek(0)
                 buffer.truncate(0)
 
-#------------------------------------------------------------------------------------------------------------------------------------
 
-def validate_input(input_value: str, pattern: Pattern, logger: Logger) -> str | None:
+def validate_input(input_value: str, pattern: Pattern, logger: Logger) -> Optional[str]:
     """
     Validates input against a regex pattern.
 
-    :param (str) input_value: The user input string.
+    :param input_value: The user input string.
     :param pattern: Regex pattern to validate against.
     :param logger: Logger for error logging.
 
-    Returns:
-        None if input is valid, else a err msg.
+    :return: None if input is valid, else a err msg.
     """
     if not input_value or not pattern.match(input_value):
         logger.error(f"Invalid input violated regex pattern: {input_value}")
         return f"{input_value} is invalid. Please correct and try again."
     
-#------------------------------------------------------------------------------------------------------------------------------------
 
-def validate_date_range(dates: tuple[str, str]) -> str | None:
+def validate_date_range(dates: tuple[str, str]) -> Optional[str]:
     """
-    :param (tuple) dates: Tuple that has (start date, end date) 
+    :param dates: Tuple that has (start date, end date).
 
-    Returns:
-        Error msg if invalid, else None
+    :return: Error msg if invalid, else None.
     """
     try:
         if not dates[0] or not dates[1]:
@@ -174,18 +160,15 @@ def validate_date_range(dates: tuple[str, str]) -> str | None:
             raise ValueError("Start date must be 2020 or later.")
         if (end_date - start_date).days > 62:
             raise ValueError("Date range is limited to 2 months") 
-
     except ValueError as e:
         return str(e)
-    
-#------------------------------------------------------------------------------------------------------------------------------------
 
-def validate_url_params(forecast: str, weather_params: list[str], weather_units: list[str]) -> list:
+
+def validate_url_params(forecast: str, weather_params: List[str], weather_units: List[str]) -> List:
     """
     Validates forecast type, weather params, and units for API URL.
     
-    Returns:
-        A list of URL components and an err if any.
+    :return: A list of URL components and an err if any.
     """
     if forecast == "&current=":
         forecast_is_current = True
@@ -194,7 +177,7 @@ def validate_url_params(forecast: str, weather_params: list[str], weather_units:
             return [None, None, None, None, None, "Please select one or more checkboxes"]
                 
         url_forecast = forecast
-        url_forecast_length = "" # Default value (7 days).
+        url_forecast_length = "" # Default value (7 days)
 
     else:
         forecast_is_current = False

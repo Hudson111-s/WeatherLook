@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const activeDate = document.getElementById("activeDate");
     const rows = table.querySelector("tbody").rows;
     
-    const chartCtx = document.getElementById('weatherChart').getContext('2d');
+    const chartCtx = document.getElementById("weatherChart").getContext("2d");
     let weatherChart = null;
 
     const tableContainer = document.getElementById("tableContainer");
@@ -20,10 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
             weatherChart.update();
         } else {
             weatherChart = new Chart(chartCtx, {
-            type: 'line',
+            type: "line",
             data: {
                 labels: chartDataLabels,
-                datasets: [{label: activeWeather.textContent, data: chartData, borderColor: 'rgba(75, 192, 192, 1)', fill: false}]
+                datasets: [{label: activeWeather.textContent, data: chartData, borderColor: "rgba(75, 192, 192, 1)", fill: false}]
             },
             options: {responsive: true, scales: {y: {beginAtZero: false} }}
         });

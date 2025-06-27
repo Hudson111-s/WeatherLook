@@ -1,14 +1,19 @@
-from website.utils import stream_csv_from_json, validate_input, validate_date_range, get_location_coordinates, validate_url_params
+from website.utils import (stream_csv_from_json, validate_input, validate_date_range,
+get_location_coordinates, validate_url_params)
 from website.api import call_api, build_api_url, build_history_api_url
 from website.params import *
-from flask import current_app,  Blueprint, redirect, render_template, request, flash, url_for, session, make_response, stream_with_context
+from flask import (current_app, Blueprint, redirect, render_template, request,
+flash, url_for, session, make_response, stream_with_context)
 from datetime import datetime
 
 main = Blueprint("main", __name__)
 
 @main.route("/", methods=["GET"])
 def Index():
-    return render_template("index.html", description="Input a location and get historical or current weather data including: Surface Pressure, Relative Humidity, and Temperature.")
+    return render_template("index.html", 
+        description="Input a location and get historical or current weather data including: Surface Pressure, Relative Humidity, and Temperature."
+    )
+
 
 @main.route("/search", methods=["GET", "POST"])
 def Search():
@@ -34,7 +39,6 @@ def Search():
                 flash(err)
                 return redirect(url_for("main.Search"))
             
-            
             # Build API URL.
             api_url = build_api_url(location_coordinates, url_weather_params, url_units, url_forecast, url_forecast_length)
 
@@ -53,13 +57,13 @@ def Search():
             }
 
             return redirect(url_for("main.Results"))
-
         except Exception as e:
             current_app.logger.exception(f"An error occurred while processing location/api: {e}")
             flash("Something went wrong, try again later!")
             return redirect(url_for("main.Search")) 
         
     return render_template("search.html", daily_params=DAILY_PARAMS, daily_readable_names=DAILY_PARAMS_READABLE, current_params=CURRENT_PARAMS, current_readable_names=CURRENT_PARAMS_READABLE)
+
 
 @main.route("/download", methods=["GET"])
 def Download():
@@ -81,12 +85,12 @@ def Download():
         response.headers["Content-Disposition"] = f"attachment; filename={filename}"
         response.headers["Content-Type"] = "text/csv; charset=utf-8"
         return response
-
     except Exception as e:
         current_app.logger.exception(f"An error occurred while streaming CSV: {e}")
         flash("Something went wrong while trying to download.")
         return redirect(url_for("main.Search"))    
-    
+
+
 @main.route("/history", methods=["GET", "POST"])
 def History():
     if request.method == "POST":
@@ -98,7 +102,7 @@ def History():
             return redirect(url_for("main.History"))
 
         # Gets valid params.
-        url_weather_params = [param for param in request.form.getlist("Checkbox[]") if param in DAILY_PARAMS] # Add other params not in current.
+        url_weather_params = [param for param in request.form.getlist("Checkbox[]") if param in DAILY_PARAMS]
         if not url_weather_params:
             flash("Please select one or more checkboxes")
             return redirect(url_for("main.History"))
@@ -137,7 +141,6 @@ def History():
             }
 
             return redirect(url_for("main.Results"))
-
         except Exception as e:
             current_app.logger.exception(f"An error occurred while processing location/api: {e}")
             flash("Something went wrong, try again later!")
@@ -163,3 +166,4 @@ def Results():
         return render_template("search_results_current.html", weather_json=weather_json, weather_params=weather_params, readable_names=CURRENT_PARAMS_READABLE, location=location)
     else:
         return render_template("search_results_forecast.html", weather_json=weather_json, weather_params=weather_params, readable_names=DAILY_PARAMS_READABLE, location=location)
+    
