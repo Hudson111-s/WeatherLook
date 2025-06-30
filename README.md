@@ -5,12 +5,21 @@
 [![pip](https://img.shields.io/badge/pip-latest-orange)](https://pip.pypa.io/en/stable/)
 
 
-**WeatherLook** is a web application that provides users with a more in-depth view of the weather anywhere in the world. With its interactive and dynamic front-end design using CSS, Bootstrap, Jinja, and JavaScript, and a secure and efficient Flask-powered back-end, users can input the location of any place and receive weather forecasts/data for the current time, today (the entire day), a 7-day forecast, and a 16-day forecast! **WeatherLook** also includes a forecast history page, which allows users to access past weather forecasts/data from 2020 to current in 2 month intervals (~62 days).
+**WeatherLook** is a web application that provides users with a more in-depth view of the weather anywhere in the world. With an interactive and dynamic front end built using **CSS**, **Bootstrap**, **Jinja**, and **JavaScript**, and a secure, efficient **Flask** back end, users can:
+
+- Get current weather
+- View today’s full forecast
+- Access 7-day and 16-day forecasts
+- Retrieve historical weather data dating back to 2020
+- View data in graph format
+- Download weather data in CSV format
+
+The historical forecast feature allows users to view and download past weather data in intervals of approximately 2 months (~62 days).
 
 
 ## 🌐 Website use
 
-The website is **not hosted online yet**, but I plan to in the future.  
+The website is **not hosted online yet**, but I plan to deploy it in the future.  
 For now, it is only available for **local use**. Please follow the instructions below to run it on your own machine.
 
 
@@ -33,8 +42,8 @@ For now, it is only available for **local use**. Please follow the instructions 
 2. **Create a virtual environment (optional but recommended)**
     
     ```bash
-    python -m venv .venv     # python3 -m venv .venv
-    .venv\Scripts\activate   # source .venv/bin/activate
+    python -m venv .venv     # OR: python3 -m venv .venv
+    .venv\Scripts\activate   # OR: source .venv/bin/activate
     ```
 
 
@@ -54,7 +63,7 @@ For now, it is only available for **local use**. Please follow the instructions 
     FLASK_KEY=<your_secret_key>
     ```
 
-    Replace <your_secret_key> with a strong, randomly generated key.
+    Replace `<your_secret_key>` with a strong, randomly generated key.
 
 
 5. **Run the app**
@@ -72,16 +81,16 @@ For now, it is only available for **local use**. Please follow the instructions 
 
 ## Weather and Geolocation Data Attribution
 
-The weather data displayed and in the `.csv` files were sourced from the [Open-Meteo API](https://open-meteo.com/).
+- The weather data displayed and in the `.csv` files are sourced from the [Open-Meteo API](https://open-meteo.com/).
 
-The geolocation data (latitude and longitude) used to obtain location was sourced from [OpenStreetMap](https://www.openstreetmap.org/) via the [Nominatim API](https://nominatim.org/).
+- The geolocation data (latitude and longitude) used to obtain the location is sourced from [OpenStreetMap](https://www.openstreetmap.org/) via the [Nominatim API](https://nominatim.org/).
 
-Data © OpenStreetMap contributors, [OpenStreetMap](https://www.openstreetmap.org/copyright).
+Geolocation data © OpenStreetMap contributors, [OpenStreetMap](https://www.openstreetmap.org/copyright). Licensed under the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 
 
 ## Contribution
 
-Contributions are welcome! Feel free to open issues or pull requests.
+Contributions are very welcome! Feel free to open [issues](https://github.com/Hudson111-s/WeatherLook/issues) or submit [pull requests](https://github.com/Hudson111-s/WeatherLook/pulls).
 
 
 ## Author
