@@ -1,24 +1,23 @@
 import requests
 from typing import Any, Dict, Optional, List, Tuple
-from logging import Logger
+from flask import current_app
 
-def call_api(api_url: str, timeout: int, logger: Logger) -> Tuple[Optional[Dict], Optional[str]]:
+def call_api(api_url: str, timeout: int) -> Tuple[Optional[Dict], Optional[str]]:
     """
     Calls api URL with error handling.
 
     :param api_url: URL for API.
     :param timeout: Time in seconds until request stops trying to get.
-    :param logger: Logger for error logging.
 
     :return: Tuple of json and msg if err.
     """
     try:
         results = requests.get(api_url, timeout=timeout)
         if results.status_code != 200:
-            logger.error(f"Failed get call to open-meteo: {results.status_code}")
+            current_app.logger.error(f"Failed get call to open-meteo: {results.status_code}")
             return None, "Something went wrong, try again later!"
     except requests.RequestException as e:
-        logger.exception(f"Failed to connect to open-meteo: {e}")
+        current_app.logger.exception(f"Failed to connect to open-meteo: {e}")
         return None, "Unable to connect to weather service."
     
     return results.json(), None

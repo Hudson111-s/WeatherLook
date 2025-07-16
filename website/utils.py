@@ -4,6 +4,7 @@ from geopy.extra.rate_limiter import RateLimiter
 from typing import Any, Optional, Generator, Tuple, List, Dict
 from logging import getLogger, INFO, Formatter, Logger
 from logging.handlers import RotatingFileHandler
+from flask import current_app
 from re import compile, Pattern
 from io import StringIO 
 from csv import writer
@@ -17,20 +18,18 @@ def create_geolocator() -> RateLimiter:
     """
     Uses geopy to create Nominatim user_agent.
     
-    :return: RateLimiter.    
+    :return: RateLimiter.
     """
     geolocator = Nominatim(user_agent="WeatherLook", timeout=10)
     rate_limiter = RateLimiter(geolocator.geocode, min_delay_seconds=1)
     return rate_limiter
 
 
-def get_location_coordinates(location: str, rate_limiter: RateLimiter, logger: Logger) -> Tuple[Optional[Any], Optional[str]]:
+def get_location_coordinates(location: str) -> Tuple[Optional[Any], Optional[str]]:
     """
     Turns location into latitude and longitude.
 
     :param location: String of location.
-    :param rate_limiter: Geopy rate_limiter object.
-    :param logger: Logger for error logging.  
     
     :return: Tuple including Location in latitude, longitude and msg if err.
     """
@@ -39,15 +38,15 @@ def get_location_coordinates(location: str, rate_limiter: RateLimiter, logger: L
         if cached_location:
             return cached_location, None
 
-        location_ll = rate_limiter(location)
+        location_ll = current_app.geolocator(location)
         if not location_ll:
-            logger.error(f"Failed to geocode location: {location}")
+            current_app.logger.error(f"Failed to geocode location: {location}")
             return None, f"{location} is a invalid location, try another!"
         
         location_cache[location.strip().lower()] = location_ll
         return location_ll, None
     except Exception as e:
-        logger.exception(f"Something when wrong while getting location coordinates: {e}")
+        current_app.logger.exception(f"Something when wrong while getting location coordinates: {e}")
         return None, "Something went wrong, try again later!"
 
 
@@ -66,7 +65,7 @@ def create_logger() -> Logger:
     try:
         os.chmod(log_path, 0o600)
     except PermissionError:
-        logger.warning("Could not set log file permissions.")
+        logger.exception("Could not set log file permissions.")
 
     return logger
 
@@ -83,7 +82,7 @@ def stream_csv_from_json(forecast_is_current: bool, weather_params: List[str], w
     :param weather_params: List of weather params for API.
     :param weather_json: Weather api response in json.
 
-    :return: A Generator
+    :return: A Generator.
     """
     buffer = StringIO()
     wtr = writer(buffer)
@@ -98,7 +97,7 @@ def stream_csv_from_json(forecast_is_current: bool, weather_params: List[str], w
         buffer.truncate(0)
 
         for param in weather_params:
-            value = f"{weather_json["current"][param]} {weather_json["current_units"][param]}"
+            value = f"{weather_json['current'][param]} {weather_json['current_units'][param]}"
             wtr.writerow([CURRENT_PARAMS_READABLE[param], value])
             yield buffer.getvalue()
             buffer.seek(0)
@@ -123,18 +122,16 @@ def stream_csv_from_json(forecast_is_current: bool, weather_params: List[str], w
                 buffer.truncate(0)
 
 
-def validate_input(input_value: str, pattern: Pattern, logger: Logger) -> Optional[str]:
+def validate_input(input_value: str) -> Optional[str]:
     """
-    Validates input against a regex pattern.
+    Validates input against regex pattern.
 
     :param input_value: The user input string.
-    :param pattern: Regex pattern to validate against.
-    :param logger: Logger for error logging.
 
     :return: None if input is valid, else a err msg.
     """
-    if not input_value or not pattern.match(input_value):
-        logger.error(f"Invalid input violated regex pattern: {input_value}")
+    if not input_value or not current_app.pattern.match(input_value):
+        current_app.logger.error(f"Invalid input violated regex pattern: {input_value}")
         return f"{input_value} is invalid. Please correct and try again."
     
 
@@ -183,8 +180,7 @@ def validate_url_params(forecast: str, weather_params: List[str], weather_units:
         forecast_is_current = False
         url_weather_params = [param for param in weather_params if param in DAILY_PARAMS]
         if not url_weather_params:
-           if not url_weather_params:
-                return [None, None, None, None, None, "Please select one or more checkboxes"]
+            return [None, None, None, None, None, "Please select one or more checkboxes"]
             
         url_forecast = "&daily="
 

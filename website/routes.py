@@ -20,7 +20,7 @@ def Search():
     if request.method == "POST":
         # Gets location and validates it.
         location = request.form.get("Location")
-        err = validate_input(location, current_app.pattern, current_app.logger)
+        err = validate_input(location)
         if err:
             flash(err)
             return redirect(url_for("main.Search"))
@@ -34,7 +34,7 @@ def Search():
         
         try:
             # Try to get location's latitude and longitude.
-            location_coordinates, err = get_location_coordinates(location, current_app.geolocator, current_app.logger)
+            location_coordinates, err = get_location_coordinates(location)
             if err:
                 flash(err)
                 return redirect(url_for("main.Search"))
@@ -43,7 +43,7 @@ def Search():
             api_url = build_api_url(location_coordinates, url_weather_params, url_units, url_forecast, url_forecast_length)
 
             # Make call to API.
-            weather_json, err = call_api(api_url, 5, current_app.logger)
+            weather_json, err = call_api(api_url, 5)
             if err:
                 flash(err)
                 return redirect(url_for("main.Search"))
@@ -96,7 +96,7 @@ def History():
     if request.method == "POST":
         # Gets location and validates it.
         location = request.form.get("Location")
-        err = validate_input(location, current_app.pattern, current_app.logger)
+        err = validate_input(location)
         if err:
             flash(err)
             return redirect(url_for("main.History"))
@@ -119,7 +119,7 @@ def History():
 
         try:
             # Try to get location's latitude and longitude.
-            location_coordinates, err = get_location_coordinates(location, current_app.geolocator, current_app.logger)
+            location_coordinates, err = get_location_coordinates(location)
             if err:
                 flash(err)
                 return redirect(url_for("main.History"))
@@ -128,7 +128,7 @@ def History():
             api_url = build_history_api_url(location_coordinates, url_weather_params, url_units, dates)
 
             # Make call to API.
-            weather_json, err = call_api(api_url, 10, current_app.logger)
+            weather_json, err = call_api(api_url, 10)
             if err:
                 flash(err)
                 return redirect(url_for("main.History"))
