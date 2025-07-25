@@ -1,7 +1,7 @@
 # WeatherLook ⛅
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.1.0-green)](https://flask.palletsprojects.com/en/latest/)
+[![Flask](https://img.shields.io/badge/Flask-3.1.1-green)](https://flask.palletsprojects.com/en/latest/)
 [![pip](https://img.shields.io/badge/pip-latest-orange)](https://pip.pypa.io/en/stable/)
 
 
