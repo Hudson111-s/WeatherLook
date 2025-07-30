@@ -5,8 +5,8 @@ from typing import Any, Optional, Generator, Tuple, List, Dict
 from logging import getLogger, INFO, Formatter, Logger
 from logging.handlers import RotatingFileHandler
 from flask import current_app
-from re import compile, Pattern
-from io import StringIO 
+from re import compile, Pattern, sub
+from io import StringIO
 from csv import writer
 from datetime import datetime
 from website.params import *
@@ -71,7 +71,11 @@ def create_logger() -> Logger:
 
 
 def create_valid_pattern() -> Pattern:
-    return compile("^[\\w\\s,.'-]+$")
+    return compile(r"^[\w\s,.'-]+$")
+
+
+def sanitize_filename(file_name) -> str:
+    return sub(r"[^a-zA-Z0-9_\-]", "_", file_name)
 
 
 def stream_csv_from_json(forecast_is_current: bool, weather_params: List[str], weather_json: Dict[str, Any]) -> Generator[str, None, None]:

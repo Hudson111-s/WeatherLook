@@ -1,5 +1,5 @@
 from website.utils import (stream_csv_from_json, validate_input, validate_date_range,
-get_location_coordinates, validate_url_params)
+get_location_coordinates, validate_url_params, sanitize_filename)
 from website.api import call_api, build_api_url, build_history_api_url
 from website.params import *
 from flask import (current_app, Blueprint, redirect, render_template, request,
@@ -78,8 +78,8 @@ def Download():
         weather_params = data.get("weather_params")
         forecast_is_current = data.get("forecast_is_current")
         
-        timestamp = datetime.today().strftime("%Y%m%d_%H%M%S")
-        filename = f"WeatherLook_{location}_{timestamp}.csv"
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"WeatherLook_{sanitize_filename(location)}_{timestamp}.csv"
 
         response = make_response(stream_with_context(stream_csv_from_json(forecast_is_current, weather_params, weather_json)))
         response.headers["Content-Disposition"] = f"attachment; filename={filename}"
@@ -146,7 +146,7 @@ def History():
             flash("Something went wrong, try again later!")
             return redirect(url_for("main.History"))
 
-    current_date = datetime.today().strftime("%Y-%m-%d")
+    current_date = datetime.now().strftime("%Y-%m-%d")
     return render_template("history.html", daily_params=DAILY_PARAMS, daily_readable_names=DAILY_PARAMS_READABLE, current_date=current_date)
 
 
