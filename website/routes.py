@@ -3,7 +3,7 @@ get_location_coordinates, validate_url_params, sanitize_filename)
 from website.api import call_api, build_api_url, build_history_api_url
 from website.params import *
 from flask import (current_app, Blueprint, redirect, render_template, request,
-flash, url_for, session, make_response, stream_with_context)
+flash, url_for, session, make_response, stream_with_context, jsonify)
 from datetime import datetime
 
 main = Blueprint("main", __name__)
@@ -166,4 +166,18 @@ def Results():
         return render_template("search_results_current.html", weather_json=weather_json, weather_params=weather_params, readable_names=CURRENT_PARAMS_READABLE, location=location)
     else:
         return render_template("search_results_forecast.html", weather_json=weather_json, weather_params=weather_params, readable_names=DAILY_PARAMS_READABLE, location=location)
+
+
+@main.route("/autocomplete", methods=["GET"])
+def Autocomplete():
+    q = request.args.get("q")
+    if not q or len(q) < 4 or len(q) > 100:
+        return jsonify([])
     
+    results, err = get_location_coordinates(q, use_suggestion_cache=True, exactly_one=False, limit=5)
+    if err:
+        return jsonify([])
+    
+    suggestions = [loc.address for loc in results if loc]
+
+    return jsonify(suggestions)

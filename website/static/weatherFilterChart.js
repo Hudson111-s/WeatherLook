@@ -10,9 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let weatherChart = null;
 
     const tableContainer = document.getElementById("tableContainer");
-    const graphContainer = document.getElementById("chartContainer");
+    const chartContainer = document.getElementById("chartContainer");
 
-    function create_graph(chartDataLabels, chartData) {
+    function createChart(chartDataLabels, chartData) {
         if (weatherChart) {
             weatherChart.data.labels = chartDataLabels;
             weatherChart.data.datasets[0].data = chartData;
@@ -30,14 +30,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function destroyChartIfExists() {
+        if (weatherChart) {
+            weatherChart.destroy();
+            weatherChart = null;
+        }
+    }
+
     function displaySortedWeather() {
         const chartDataLabels = [];
         const chartData = [];
         const weatherValue = weatherSort.value;
         const dateValue = dateSort.value;
 
-        activeWeather.textContent = weatherValue == "All" ? "All Types" : weatherValue;
-        activeDate.textContent = dateValue == "All" ? "All Dates" : dateValue;
+        activeWeather.textContent = weatherValue === "All" ? "All Types" : weatherValue;
+        activeDate.textContent = dateValue === "All" ? "All Dates" : dateValue;
               
         for (let i = 0; i < rows.length; i++) {
             const cells = rows[i].cells;
@@ -46,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const date = cells[2].textContent.trim();
 
             if ((date === dateValue || dateValue === "All") && (weatherType === weatherValue || weatherValue === "All")) {
-                rows[i].style.display = "";
+                rows[i].hidden = false;
 
                 if (weatherValue != "All" && dateValue == "All") {
                     chartDataLabels.push(date);
@@ -54,21 +61,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
             } else {
-                rows[i].style.display = "none";
+                rows[i].hidden = true;
             }
         }
 
-        if (weatherValue != "All" && dateValue == "All") {
-            graphContainer.classList.remove("d-none");
-            graphContainer.classList.add("col-md-6");
+        if (weatherValue !== "All" && dateValue === "All" && chartData.length > 1) {
+            chartContainer.classList.remove("d-none");
+            chartContainer.classList.add("col-md-6");
             tableContainer.classList.remove("col-md-12");
             tableContainer.classList.add("col-md-6");
-            create_graph(chartDataLabels, chartData);
+            createChart(chartDataLabels, chartData);
         } else {
-            graphContainer.classList.add("d-none");
-            graphContainer.classList.remove("col-md-6");
+            chartContainer.classList.add("d-none");
+            chartContainer.classList.remove("col-md-6");
             tableContainer.classList.add("col-md-12");
             tableContainer.classList.remove("col-md-6");
+            destroyChartIfExists();
         }
     }
 

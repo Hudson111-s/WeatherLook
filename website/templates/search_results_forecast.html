@@ -9,7 +9,7 @@
     </div>
 
     <div class="col-md-6 pb-4">
-      <h6 class="text-primary text-center"><i class="bi bi-cloud-sun"></i>Find by Weather Type</h6>
+      <h6 class="text-center"><i class="bi bi-cloud-sun"></i>Find by Weather Type</h6>
       <select class="form-select" id="weatherSort">
         <option value="All" selected>All Types</option>
         {% for param in weather_params %}
@@ -20,7 +20,7 @@
 
     {% set date = weather_json["daily"]["time"] %}
     <div class="col-md-6 pb-4">
-      <h6 class="text-primary text-center"><i class="bi bi-calendar3"></i>Find by Date</h6>
+      <h6 class="text-center"><i class="bi bi-calendar3"></i>Find by Date</h6>
       <select class="form-select" id="dateSort">
         <option value="All" selected>All Dates</option>
         {% for cur_date in date %}
@@ -83,5 +83,5 @@
 
 {% block script %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="{{ url_for('static', filename='sortBy.js') }}"></script>
+  <script src="{{ url_for('static', filename='weatherFilterChart.js') }}"></script>
 {% endblock %}

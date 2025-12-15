@@ -1,6 +1,7 @@
 import os
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
+from cachetools import TTLCache
 from typing import Any, Optional, Generator, Tuple, List, Dict
 from logging import getLogger, INFO, Formatter, Logger
 from logging.handlers import RotatingFileHandler
@@ -12,7 +13,8 @@ from datetime import datetime
 from website.params import *
 
 # In-memory cache.
-location_cache = {}
+location_cache = TTLCache(maxsize=1000, ttl=3600)
+suggestion_cache = TTLCache(maxsize=2000, ttl=3600)
 
 def create_geolocator() -> RateLimiter:
     """
@@ -25,25 +27,29 @@ def create_geolocator() -> RateLimiter:
     return rate_limiter
 
 
-def get_location_coordinates(location: str) -> Tuple[Optional[Any], Optional[str]]:
+def get_location_coordinates(location: str, use_suggestion_cache: bool = False, **kwargs) -> Tuple[Optional[Any], Optional[str]]:
     """
     Turns location into latitude and longitude.
 
     :param location: String of location.
+    :param use_suggestion_cache: When to use the suggestion cache.
+    :param kwargs: Extra keyword arguments passed to geolocator.
     
-    :return: Tuple including Location in latitude, longitude and msg if err.
+    :return: Tuple including Location, latitude, longitude, and msg if err.
     """
     try:
-        cached_location = location_cache.get(location.strip().lower())
-        if cached_location:
-            return cached_location, None
+        key = location.strip().lower()
+        cache = suggestion_cache if use_suggestion_cache else location_cache
+        if key in cache:
+            return cache[key], None
 
-        location_ll = current_app.geolocator(location)
+        location_ll = current_app.geolocator(location, **kwargs)
         if not location_ll:
-            current_app.logger.error(f"Failed to geocode location: {location}")
+            if not use_suggestion_cache:
+                current_app.logger.error(f"Failed to geocode location: {location}")
             return None, f"{location} is a invalid location, try another!"
         
-        location_cache[location.strip().lower()] = location_ll
+        cache[key] = location_ll
         return location_ll, None
     except Exception as e:
         current_app.logger.exception(f"Something when wrong while getting location coordinates: {e}")

@@ -1,18 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     const forecastSelect = document.getElementById("forecastSelect");
+    const allCurrent = document.querySelectorAll(".currentCheckboxesCol");
+    const allForecast = document.querySelectorAll(".forecastCheckboxesCol");
 
     forecastSelect.addEventListener("change", () => {
-        const forecastValue = forecastSelect.value;
-        const allCurrent = document.querySelectorAll(".currentCheckboxesCol");
-        const allForecast = document.querySelectorAll(".forecastCheckboxesCol");
-
-        if (forecastValue === "&current=") {
-            allCurrent.forEach((checkbox) => {checkbox.style.display = "block"; });
-            allForecast.forEach((checkbox) => {checkbox.style.display = "none"; });
-        } else {
-            allCurrent.forEach((checkbox) => {checkbox.style.display = "none"; });
-            allForecast.forEach((checkbox) => {checkbox.style.display = "block"; });
-        }
+        const isCurrent = forecastSelect.value === "&current=";
+        allCurrent.forEach((checkbox) => checkbox.hidden = !isCurrent);
+        allForecast.forEach((checkbox) => checkbox.hidden = isCurrent);
     });
 
     forecastSelect.dispatchEvent(new Event("change"));
