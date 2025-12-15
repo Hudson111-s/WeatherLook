@@ -1,8 +1,8 @@
 # WeatherLook ⛅
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.1.1-green)](https://flask.palletsprojects.com/en/latest/)
-[![pip](https://img.shields.io/badge/pip-latest-orange)](https://pip.pypa.io/en/stable/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.1.2-green?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/en/latest/)
+[![pip](https://img.shields.io/badge/pip-latest-orange?style=for-the-badge&logo=pypi&logoColor=white)](https://pip.pypa.io/en/stable/)
 
 
 **WeatherLook** is a web application that provides users with a more in-depth view of the weather anywhere in the world. With an interactive and dynamic front end built using **CSS**, **Bootstrap**, **Jinja**, and **JavaScript**, and a secure, efficient **Flask** back end, users can:
@@ -81,9 +81,9 @@ For now, it is only available for **local use**. Please follow the instructions 
 
 ## Weather and Geolocation Data Attribution
 
-- The weather data displayed and in the `.csv` files are sourced from the [Open-Meteo API](https://open-meteo.com/).
+- The weather data displayed and in the `.csv` files are sourced from the [Open-Meteo API](https://open-meteo.com/)
 
-- The geolocation data (latitude and longitude) used to obtain the location is sourced from [OpenStreetMap](https://www.openstreetmap.org/) via the [Nominatim API](https://nominatim.org/).
+- The geolocation data (latitude and longitude) is sourced from [OpenStreetMap](https://www.openstreetmap.org/) via the [Nominatim API](https://nominatim.org/)
 
 Geolocation data © OpenStreetMap contributors, [OpenStreetMap](https://www.openstreetmap.org/copyright). Licensed under the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 
