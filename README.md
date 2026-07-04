@@ -4,7 +4,6 @@
 [![Flask](https://img.shields.io/badge/Flask-3.1.2-green?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/en/latest/)
 [![pip](https://img.shields.io/badge/pip-latest-orange?style=for-the-badge&logo=pypi&logoColor=white)](https://pip.pypa.io/en/stable/)
 
-
 **WeatherLook** is a web application that provides users with a more in-depth view of the weather anywhere in the world. With an interactive and dynamic front end built using **CSS**, **Bootstrap**, **Jinja**, and **JavaScript**, and a secure, efficient **Flask** back end, users can:
 
 - Get current weather
@@ -16,18 +15,15 @@
 
 The historical forecast feature allows users to view and download past weather data in intervals of approximately 2 months (~62 days).
 
-
 ## 🌐 Website use
 
 The website is **not hosted online yet**, but I plan to deploy it in the future.  
 For now, it is only available for **local use**. Please follow the instructions below to run it on your own machine.
 
-
 ## Prerequisites
 
 - **Python** 3.9+  
 - **pip** (Python package installer)
-
 
 ## ⚙️ Setup and Installation
 
@@ -38,7 +34,6 @@ For now, it is only available for **local use**. Please follow the instructions 
     cd WeatherLook
     ```
 
-
 2. **Create a virtual environment (optional but recommended)**
     
     ```bash
@@ -46,13 +41,11 @@ For now, it is only available for **local use**. Please follow the instructions 
     .venv\Scripts\activate   # OR: source .venv/bin/activate
     ```
 
-
 3. **Install dependencies**
     
     ```bash
     pip install -r requirements.txt
     ```
-
 
 4. **Set environment variables**
 
@@ -65,7 +58,6 @@ For now, it is only available for **local use**. Please follow the instructions 
 
     Replace `<your_secret_key>` with a strong, randomly generated key.
 
-
 5. **Run the app**
 
     Run the application using Flask:
@@ -73,11 +65,9 @@ For now, it is only available for **local use**. Please follow the instructions 
     flask run
     ```
 
-
 6. **Open your browser** 
 
     Visit `http://127.0.0.1:5000` to access the app.
-
 
 ## Weather and Geolocation Data Attribution
 
@@ -87,11 +77,9 @@ For now, it is only available for **local use**. Please follow the instructions 
 
 Geolocation data © OpenStreetMap contributors, [OpenStreetMap](https://www.openstreetmap.org/copyright). Licensed under the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 
-
 ## Contribution
 
 Contributions are very welcome! Feel free to open [issues](https://github.com/Hudson111-s/WeatherLook/issues) or submit [pull requests](https://github.com/Hudson111-s/WeatherLook/pulls).
-
 
 ## Author
 
